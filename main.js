@@ -6,7 +6,9 @@ var qs = require('querystring');
 var bodyParser = require('body-parser');
 var topicRouter = require('./routes/topic.js');
 var indexRouter = require('./routes/index.js');
+var db = require('./lib/db.js');
 var helmet = require('helmet')
+
 
 app.use(helmet());
 app.use(express.static('public'));
@@ -19,12 +21,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //3 express에서 지금까지 쓰던 app.get || app.post는 미들웨어 였음. 
 //4 미들웨어는 위에서 순차적으로 처리함.
 
-app.get('*',function(request,response,next){
-  fs.readdir('./data', function(error, filelist){ //data에 접근해서 파일이름을 가져온다.
-      request.list = filelist; //request변수에 list를 추가해서 filelist를 넣어준다. 
-      next(); //다음 미들웨어 호출.
-  });  
-});
+// app.get('*',function(request,response,next){
+//   fs.readdir('./data', function(error, filelist){ //data에 접근해서 파일이름을 가져온다.
+//       request.list = filelist; //request변수에 list를 추가해서 filelist를 넣어준다. 
+//       next(); //다음 미들웨어 호출.
+//   });  
+// });
+
+
 
 app.use('/topic',topicRouter); //topicRouter에 쓰여진 미들웨어를 topic 파일 위치로 가서 /topic url를 붙여서 접근한다.
 app.use('/',indexRouter);
