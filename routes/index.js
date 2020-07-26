@@ -2,6 +2,7 @@ const express = require('express');
 var router =express.Router(); //라우터 선언 
 var template = require('../lib/template.js');
 var db = require('../lib/db.js');
+var auth = require('../lib/auth');
 
 
 //route, routing
@@ -17,7 +18,7 @@ router.get('/', function(request, response) {
                  ""<img src="/img/cafe.jpg" 
                 style="width : 300px; display : block; margin-top : 10px;">`;
         
-    var html = template.HTML(title, list,body,control);
+    var html = template.HTML(title, list,body,control,auth.statusUI(request, response));
     response.send(html);
 
     });

@@ -5,6 +5,7 @@ var fs = require('fs');
 var sanitizeHtml = require('sanitize-html'); //html 스크립트 필터
 var template = require('../lib/template.js');
 var db = require('../lib/db.js');
+var auth = require('../lib/auth');
 
 
 
@@ -25,7 +26,7 @@ router.get('/create',function(request,response){
             </p>
           </form>`;
 
-            var html = template.HTML(title, list,body,control);
+            var html = template.HTML(sanitizeHtml(title), list,body,control,auth.statusUI(request, response));
             response.send(html);
             });
 });
@@ -52,9 +53,9 @@ router.get('/update/:pageId',function(request,response){
             var body =`
                     <form action="/topic/update_process" method="post">
                       <input type="hidden" name="id" value="${filteredId}">
-                      <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+                      <p><input type="text" name="title" placeholder="title" value="${sanitizeHtml(title)}"></p>
                       <p>
-                        <textarea name="description" placeholder="description">${description}</textarea>
+                        <textarea name="description" placeholder="description">${sanitizeHtml(description)}</textarea>
                       </p>
                       <p>
                         <input type="submit">
@@ -62,7 +63,7 @@ router.get('/update/:pageId',function(request,response){
                     </form>
                      `;
 
-            var html = template.HTML(title, list,body,control);
+            var html = template.HTML(sanitizeHtml(title), list,body,control,auth.statusUI(request, response));
             response.send(html);
         });
     });
@@ -110,14 +111,14 @@ router.get('/:pageId', function(request, response,next) {
             var title = topic[0].title;
             var description = topic[0].description;
             var list = template.list(topics);
-            var control = `<a href="/topic/create">create</a> <a                     href="/topic/update/${filteredId}">update</a>
+            var control = `<a href="/topic/create">create</a> <a                     href="/topic/update/${sanitizeHtml(filteredId)}">update</a>
                     <form action="/topic/delete_process" method="post">
-                      <input type="hidden" name="id" value="${filteredId}">
+                      <input type="hidden" name="id" value="${sanitizeHtml(filteredId)}">
                       <input type="submit" value="delete">
                     </form>`;
-            var body =`<h2>${title}</h2> ${description} <p>by ${topic[0].name}</p>`;
+            var body =`<h2>${title}</h2> ${sanitizeHtml(description)} <p>by ${sanitizeHtml(topic[0].name)}</p>`;
 
-            var html = template.HTML(title, list,body,control);
+            var html = template.HTML(title, list,body,control,auth.statusUI(request, response));
             response.send(html);
 
         });
