@@ -8,6 +8,7 @@ var auth = require('../lib/auth');
 //route, routing
 //app.get('/', (req, res) => res.send('Hello World!'))
 router.get('/', function(request, response) { 
+    console.log('/',request.user);
     
     db.query('SELECT * FROM topic', function (error, topics) {
     var title = 'Welcome';

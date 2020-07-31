@@ -1,40 +1,35 @@
 const express = require('express');
 const app = express();
 var fs = require('fs');
-var template = require('./lib/template.js');
 var qs = require('querystring');
 var bodyParser = require('body-parser');
-var topicRouter = require('./routes/topic.js');
-var indexRouter = require('./routes/index.js');
 var db = require('./lib/db.js');
 var helmet = require('helmet')
 var session = require('express-session');
-var authRouter = require('./routes/auth');
+var cookieParser = require('cookie-parser');
+var MySQLStore = require('express-mysql-session')(session);
+
 // var FileStore = require('session-file-store')(session) // 세션을 파일에 저장 >>sql로 바꾸고 싶다면 sql을 받아와서 쓰면됨
 
 
-app.use(helmet());
-app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(helmet());
+    app.use(express.static('public'));
+    app.use(cookieParser());
+    app.use(bodyParser.urlencoded({ extended: false }));
 //정적인 파일(사진)을 서비스하려면 위에 두줄로 파일을 지정해줘야한다. 지정하면 url로 이미지를 불러올수 있음.
+
+var sessionStore = require('./nodejs/mysql_session.js');
 
 app.use(session({
     secret: 'asadlfkj!@#!@#dfgasdg',
     resave: false, // >> 세션의 데이터가 바뀔시 데이터를 저장 true>> 데이터를 늘 저장.
     saveUninitialized: true, //세션을 호출하지 않는한 호출하지 않음. false >> 늘 세션을 호출함
-    // store:new FileStore() // 세션을 파일에 저장하는 옵션  
-}))
+     store: sessionStore// mysql session store
+}));
 
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+var passport_token=require('./lib/passport_user.js')(app);
 
-// app.post('/auth/login_process',
-//   passport.authenticate('local', {
-//     successRedirect: '/', //성공시 경로
-//     failureRedirect: '/auth/login' //실패시 경로
-//   }));
-
-
+/*
 //이렇게 사용할시 세션의 데이터는 메모리에 들어감 .. 그리고 서버가 꺼지면 메모리가 휘발됨. >> 세션의 데이터가 날아감
 app.get('/sessionTest', function (req, res, next) {
     console.log(req.session);
@@ -45,6 +40,7 @@ app.get('/sessionTest', function (req, res, next) {
     }
     res.send(`Views : ${req.session.num}`);
 })
+*/
 
 
 //미들웨어 생성
@@ -59,6 +55,11 @@ app.get('/sessionTest', function (req, res, next) {
 //       next(); //다음 미들웨어 호출.
 //   });  
 // });
+
+var topicRouter = require('./routes/topic.js');
+var indexRouter = require('./routes/index.js');
+var authRouter = require('./routes/auth')(passport_token);
+
 app.use('/topic',topicRouter); //topicRouter에 쓰여진 미들웨어를 topic 파일 위치로 가서 /topic url를 붙여서 접근한다.
 app.use('/',indexRouter);
 app.use('/auth', authRouter);

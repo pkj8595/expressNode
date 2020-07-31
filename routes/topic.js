@@ -102,11 +102,11 @@ router.get('/:pageId', function(request, response,next) {
     console.log(filteredId);
     db.query('SELECT * FROM topic ', function (error, topics) {
         if(error){
-               throw error
+               throw error;
            }
         db.query('SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id WHERE topic.id = ?',filteredId, function (error, topic) {
             if(error){
-               throw error
+               throw error;
            }
             var title = topic[0].title;
             var description = topic[0].description;
