@@ -17,3 +17,4 @@ http://expressjs.com/ko/guide/database-integration.html#mysql
 5.로그인/로그아웃 구현 
 
 
+6. test
