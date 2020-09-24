@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title= title
+    style
+        include css/indexcss.css
+  body
+    h1= message
+    ul 
+        -for(var i=0; i<5; i++)
+            li coding
+    div= time
+    script
+        include script/indexScript.js
+    include foot.pug

@@ -10,7 +10,8 @@ var cookieParser = require('cookie-parser');
 var MySQLStore = require('express-mysql-session')(session);
 
 // var FileStore = require('session-file-store')(session) // 세션을 파일에 저장 >>sql로 바꾸고 싶다면 sql을 받아와서 쓰면됨
-
+    app.set('views', './views');
+    app.set('view engine', 'pug');
 
     app.use(helmet());
     app.use(express.static('public'));
@@ -64,6 +65,10 @@ app.use('/topic',topicRouter); //topicRouter에 쓰여진 미들웨어를 topic 
 app.use('/',indexRouter);
 app.use('/auth', authRouter);
 
+//pug 연결 render(연결한 폴더 안의 파일이름, 배열 데이터)
+app.get('/viewtest',function(req,res){
+    res.render('index',{title : 'hey', message: 'hello pug' , time : Date()});
+});
 
 
 
